@@ -48,6 +48,30 @@ const Metafield = new SimpleSchema({
   }
 });
 
+const ImageSizes = new SimpleSchema({
+  large: {
+    type: String,
+    optional: true,
+  },
+  medium: {
+    type: String,
+    optional: true,
+  },
+  original: {
+    type: String,
+    optional: true,
+  },
+  small: {
+    type: String,
+    optional: true,
+  },
+  thumbnail: {
+    type: String,
+    optional: true,
+  },
+});
+
+
 /**
  * @name CartAddress
  * @memberof Schemas
@@ -740,7 +764,11 @@ export const CartItem = new SimpleSchema({
   "variantTitle": {
     type: String,
     optional: true
-  }
+  },
+  "imageURLs": {
+    type: ImageSizes,
+    optional: true,
+  },
 });
 
 /**
