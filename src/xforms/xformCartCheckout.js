@@ -74,9 +74,11 @@ function xformCartFulfillmentGroup(fulfillmentGroup, cart) {
  * @param {Object} cart Cart document
  * @returns {Object} Checkout object
  */
-export default async function xformCartCheckout(collections, cart) {
+export default async function xformCartCheckout(collections, cart, context) {
+  cart.currencyCode = context.account.profile.currency;
   // itemTotal is qty * amount for each item, summed
-  const itemTotal = (cart.items || []).reduce((sum, item) => (sum + item.subtotal.amount), 0);
+  let itemTotal = (cart.items || []).reduce((sum, item) => (sum + item.subtotal.amount), 0);
+  itemTotal = context.queries.getExchangedPrice(itemTotal, cart.currencyCode);
 
   // shippingTotal is shipmentMethod.rate for each item, summed
   // handlingTotal is shipmentMethod.handling for each item, summed
@@ -96,6 +98,8 @@ export default async function xformCartCheckout(collections, cart) {
       }
     });
 
+    shippingTotal = context.queries.getExchangedPrice(shippingTotal, cart.currencyCode);
+    handlingTotal = context.queries.getExchangedPrice(handlingTotal, cart.currencyCode);
     if (!hasNoSelectedShipmentMethods) {
       fulfillmentTotal = shippingTotal + handlingTotal;
     }
@@ -111,7 +115,9 @@ export default async function xformCartCheckout(collections, cart) {
     ({ tax: taxTotal, taxableAmount } = taxSummary);
   }
 
-  const discountTotal = cart.discount || 0;
+  let discountTotal = cart.discount || 0;
+  discountTotal = context.queries.getExchangedPrice(discountTotal, cart.currencyCode);
+
 
   // surchargeTotal is sum of all surcharges is qty * amount for each item, summed
   const surchargeTotal = (cart.surcharges || []).reduce((sum, surcharge) => (sum + surcharge.amount), 0);
@@ -146,8 +152,8 @@ export default async function xformCartCheckout(collections, cart) {
     fulfillmentGroups,
     summary: {
       discountTotal: {
-        amount: discountTotal,
-        currencyCode: cart.currencyCode
+        amount: context.queries.getExchangedPrice(discountTotal, cart.currencyCode),
+        currencyCode: cart.currencyCode,
       },
       effectiveTaxRate: effectiveTaxRateObject,
       fulfillmentTotal: fulfillmentTotalMoneyObject,

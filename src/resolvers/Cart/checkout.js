@@ -11,5 +11,5 @@ import xformCartCheckout from "../../xforms/xformCartCheckout.js";
  * @returns {Promise<Object>} A connection object
  */
 export default async function checkout(cart, connectionArgs, context) {
-  return xformCartCheckout(context.collections, cart);
+  return xformCartCheckout(context.collections, cart, context);
 }
