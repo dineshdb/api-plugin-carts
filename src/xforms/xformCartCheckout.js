@@ -75,7 +75,7 @@ function xformCartFulfillmentGroup(fulfillmentGroup, cart) {
  * @returns {Object} Checkout object
  */
 export default async function xformCartCheckout(collections, cart, context) {
-  cart.currencyCode = context.account.profile.currency;
+  cart.currencyCode = (context.account && context.account.profile && context.account.profile.currency) || cart.currencyCode;
   // itemTotal is qty * amount for each item, summed
   let itemTotal = (cart.items || []).reduce((sum, item) => (sum + item.subtotal.amount), 0);
   itemTotal = context.queries.getExchangedPrice(itemTotal, cart.currencyCode);

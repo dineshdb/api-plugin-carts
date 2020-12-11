@@ -21,7 +21,7 @@ import addCartItems from "../util/addCartItems.js";
  *   optionally retry with the correct price or quantity.
  */
 export default async function createCart(context, input) {
-  const { items, shopId, shouldCreateWithoutItems = false } = input;
+  const { items, shopId, shouldCreateWithoutItems = false, currencyCode } = input;
   const { collections, accountId = null, getFunctionsOfType } = context;
   const { Cart, Shops } = collections;
 
@@ -55,8 +55,7 @@ export default async function createCart(context, input) {
   }
 
   const shop = await Shops.findOne({ _id: shopId }, { projection: { currency: 1 } });
-  const cartCurrencyCode = (shop && shop.currency) || "USD";
-
+  const cartCurrencyCode = currencyCode || (shop && shop.currency) || "USD";
 
   const createdAt = new Date();
   const newCart = {

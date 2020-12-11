@@ -312,6 +312,11 @@ input CreateCartInput {
 
   "ShopId association for the cart."
   shopId: ID!
+
+  """
+  Currency code for this cart
+  """
+  currencyCode: String 
 }
 
 "Information about an item to add to a cart"

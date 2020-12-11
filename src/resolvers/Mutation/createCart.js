@@ -14,7 +14,7 @@ import { decodeCartItemsOpaqueIds, decodeShopOpaqueId } from "../../xforms/id.js
  * @returns {Promise<Object>} CreateCartPayload
  */
 export default async function createCart(parentResult, { input }, context) {
-  const { clientMutationId = null, items: itemsInput, shopId: opaqueShopId } = input;
+  const { clientMutationId = null, items: itemsInput, shopId: opaqueShopId, currencyCode } = input;
   const shopId = decodeShopOpaqueId(opaqueShopId);
   const items = decodeCartItemsOpaqueIds(itemsInput);
 
@@ -25,7 +25,8 @@ export default async function createCart(parentResult, { input }, context) {
     token
   } = await context.mutations.createCart(context, {
     items,
-    shopId
+    shopId,
+    currencyCode
   });
 
   return {

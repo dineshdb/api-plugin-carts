@@ -39,9 +39,24 @@ function sortCartItems(cartItems, connectionArgs) {
 export default async function items(cart, connectionArgs, context) {
   let { items: cartItems } = cart;
   if (!Array.isArray(cartItems) || cartItems.length === 0) return xformArrayToConnection(connectionArgs, []);
+  cart.currencyCode = (context.account && context.account.profile && context.account.profile.currency) || cart.currencyCode;
 
   // Apply requested sorting
   cartItems = sortCartItems(cartItems, connectionArgs);
+  cartItems = cartItems.map(item => {
+
+    return {
+      ...item,
+      price: getTargetCurrencyPrice(item, cart.currencyCode, context)
+    }
+  });
 
   return xformArrayToConnection(connectionArgs, xformCartItems(context, cartItems));
+}
+
+async function getTargetCurrencyPrice(cartItem, currencyCode, context) {
+  return currencyCode ? {
+    amount: context.queries.getExchangedPrice(cartItem.price.amount, currencyCode),
+    currencyCode,
+  }: cartItem.price
 }
