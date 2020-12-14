@@ -43,20 +43,17 @@ export default async function items(cart, connectionArgs, context) {
 
   // Apply requested sorting
   cartItems = sortCartItems(cartItems, connectionArgs);
-  cartItems = cartItems.map(item => {
-
-    return {
-      ...item,
-      price: getTargetCurrencyPrice(item, cart.currencyCode, context)
-    }
-  });
+  if(context.queries.getForexFor(cart.currencyCode)) {
+    cartItems = cartItems.map(item => {
+      return {
+        ...item,
+        price: {
+          amount: context.queries.getExchangedPrice(item, cart.currencyCode),
+          currencyCode: cart.currencyCode
+        }
+      }
+    });
+  }
 
   return xformArrayToConnection(connectionArgs, xformCartItems(context, cartItems));
-}
-
-async function getTargetCurrencyPrice(cartItem, currencyCode, context) {
-  return currencyCode ? {
-    amount: context.queries.getExchangedPrice(cartItem.price.amount, currencyCode),
-    currencyCode,
-  }: cartItem.price
 }
