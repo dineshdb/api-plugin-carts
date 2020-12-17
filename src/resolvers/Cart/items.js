@@ -48,7 +48,7 @@ export default async function items(cart, connectionArgs, context) {
       return {
         ...item,
         price: {
-          amount: context.queries.getExchangedPrice(item, cart.currencyCode),
+          amount: context.queries.getExchangedPrice(item.price.amount, cart.currencyCode),
           currencyCode: cart.currencyCode
         }
       }
