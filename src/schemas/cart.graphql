@@ -615,4 +615,6 @@ extend type Mutation {
     "Mutation input"
     input: UpdateCartItemsQuantityInput!
   ): UpdateCartItemsQuantityPayload!
+
+  updateCartCurrency(cartId: ID!, currencyCode: String!, cartToken: String!): Cart
 }
