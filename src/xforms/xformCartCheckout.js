@@ -152,7 +152,7 @@ export default async function xformCartCheckout(collections, cart, context) {
     fulfillmentGroups,
     summary: {
       discountTotal: {
-        amount: context.queries.getExchangedPrice(discountTotal, cart.currencyCode),
+        amount: discountTotal,
         currencyCode: cart.currencyCode,
       },
       effectiveTaxRate: effectiveTaxRateObject,
